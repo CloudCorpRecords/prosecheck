@@ -1,0 +1,5 @@
+Fixes #3307
+
+When skipping an unknown byte/text string with ignoreUnknownKeys, skip() moved past the end of truncated input and decoding succeeded. Check remaining bytes before skipping and throw on EOF.
+
+Added two tests in CborDecoderTest for truncated byte and text strings. They fail without the change.

@@ -1,0 +1,19 @@
+Fixes #3307
+
+`ByteArrayInput.skip(length)` advanced the input position by `length` without checking that enough bytes remained. When `Cbor { ignoreUnknownKeys = true }` skipped an unknown byte string (or text string) whose declared length exceeded the remaining input, decoding silently succeeded on truncated data instead of failing — e.g. the map `{"x": bytes(5)}` with no value bytes decoded to a default instance.
+
+`skip` now throws `CborDecodingException` ("Unexpected EOF, available … bytes, requested: …") when the number of bytes to skip exceeds the remaining input — the same exception and message shape the decoder already uses for other truncated input (see `CborParser.ensureEnoughBytes`).
+
+### Tests
+
+Added to `CborDecoderTest`:
+
+- `testSkipTruncatedByteStringWithIgnoreUnknownKeys` — the reproducer from #3307 (hex `a1617845`)
+- `testSkipTruncatedTextStringWithIgnoreUnknownKeys` — the same truncation through a text string (hex `a1617865`), which shares the skip path
+
+Both tests fail on `dev` before the fix (no exception is thrown) and pass with it.
+
+Test report (`:kotlinx-serialization-cbor:jvmTest`, Gradle 9.7.1, Temurin 17 launcher / JDK 11 toolchain):
+
+- Before the fix, `CborDecoderTest` only: 27 tests, exactly the 2 new tests failed, 25 pre-existing passed
+- With the fix, full CBOR JVM suite: 164 tests, 0 failures, 0 errors, 0 skipped

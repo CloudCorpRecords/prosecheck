@@ -1,0 +1,12 @@
+CBOR: Throw on truncated unknown byte/text strings skipped with ignoreUnknownKeys
+
+ByteArrayInput.skip() advanced the input position past the end of the
+input when a skipped (unknown) byte string or text string declared more
+bytes than remained, so decoding with ignoreUnknownKeys = true silently
+accepted truncated input instead of failing.
+
+skip() now throws CborDecodingException when the number of bytes to skip
+exceeds the remaining input, matching how other truncated CBOR input is
+rejected (see CborParser.ensureEnoughBytes).
+
+Signed-off-by: Rene Turcios <95189389+CloudCorpRecords@users.noreply.github.com>

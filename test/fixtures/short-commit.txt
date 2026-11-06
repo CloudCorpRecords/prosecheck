@@ -1,0 +1,5 @@
+CBOR: throw on truncated skipped strings
+
+Check remaining bytes in skip() so truncated unknown strings fail instead of decoding.
+
+Signed-off-by: Rene Turcios <95189389+CloudCorpRecords@users.noreply.github.com>

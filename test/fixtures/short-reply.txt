@@ -1,0 +1,1 @@
+Understood, sorry about that — trimmed the description and commit. Working on your two comments now: moving the check to the decoder and reusing SimpleClasses.
